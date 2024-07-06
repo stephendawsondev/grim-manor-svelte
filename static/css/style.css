@@ -1,6 +1,6 @@
 @font-face {
 	font-family: 'Risque';
-	src: url('../fonts/risque-regular.ttf');
+	src: url('/fonts/risque-regular.ttf');
 }
 
 * {
