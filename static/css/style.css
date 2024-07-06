@@ -1,0 +1,645 @@
+@font-face {
+	font-family: 'Risque';
+	src: url('../fonts/risque-regular.ttf');
+}
+
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+body,
+html {
+	height: 100%;
+	margin: 0;
+}
+
+body {
+	font-family: 'Risque', sans-serif;
+}
+
+img {
+	pointer-events: none;
+}
+
+/* Display of landing page and index */
+.main-page {
+	display: none;
+}
+
+.main-page.in-play {
+	display: block;
+}
+
+.chevron-right {
+	visibility: hidden;
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	animation: chevron-right 1s infinite;
+}
+
+.chevron-right.display {
+	visibility: visible;
+}
+
+.chevron-right path {
+	stroke: #fff;
+}
+
+@keyframes chevron-right {
+	0% {
+		transform: translateX(0);
+	}
+	50% {
+		transform: translateX(5px);
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
+
+.audio-button {
+	position: fixed;
+	border: none;
+	top: 5px;
+	left: 5px;
+	z-index: 5;
+	background-color: transparent;
+	opacity: 0.5;
+	pointer-events: all;
+}
+
+.music-button {
+	top: 5px;
+	left: 5px;
+	z-index: 6;
+}
+
+.sound-button {
+	top: 5px;
+	left: 50px;
+	z-index: 6;
+}
+/* Maison container css */
+
+#mansion-container {
+	position: relative;
+	float: left;
+	height: 100vh;
+	overflow: hidden;
+	position: relative;
+	min-width: 1792px;
+	width: 100%;
+}
+
+#mansion-container #background-image {
+	width: 100%;
+	height: 100%;
+}
+
+.overlay-container {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.show {
+	opacity: 0 !important;
+}
+
+.door-help {
+	width: 50px;
+}
+
+.interactive {
+	background-color: transparent;
+	opacity: 1;
+	pointer-events: all;
+	border: none;
+}
+
+#door1 {
+	position: absolute;
+	top: 60%;
+	left: 23%;
+	width: 120px;
+	height: 310px;
+}
+
+#door2 {
+	position: absolute;
+	top: 60%;
+	left: 42%;
+	width: 100px;
+	height: 210px;
+}
+
+#door3 {
+	position: absolute;
+	top: 55%;
+	left: 60%;
+	width: 58px;
+	height: 170px;
+}
+
+#door4 {
+	position: absolute;
+	top: 60%;
+	left: 77%;
+	width: 110px;
+	height: 320px;
+}
+
+#guide {
+	position: absolute;
+	z-index: 1;
+	transition: opacity 2s ease-in-out;
+	bottom: 10%;
+	left: 61%;
+	width: 100px;
+	display: none;
+}
+
+/* End Mansion css styles */
+
+/* Ghost css */
+.ghost-container {
+	position: fixed;
+	bottom: 0;
+	left: 100px;
+	width: 90%;
+	height: 48%;
+	pointer-events: none;
+}
+
+.ghost-image {
+	position: sticky;
+	z-index: 1;
+	opacity: 0;
+	transition: opacity 2s ease-in-out;
+	width: 150px;
+	left: 50%;
+	bottom: 2%;
+}
+
+.ghost-image.active {
+	opacity: 0.8;
+}
+
+#game-container {
+	width: 80%;
+	margin: 0 auto;
+	height: 90%;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+#game-container::backdrop {
+	background-color: rgba(255, 255, 255, 0.75);
+}
+
+/* DIALOGUE BOX */
+.dialogue-box {
+	position: fixed;
+	width: 90%;
+	max-width: 900px;
+	height: 100px;
+	bottom: 10%;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: rgba(0, 0, 0, 0.8);
+	color: #fff;
+	padding: 1em;
+	display: none;
+	z-index: 2;
+}
+
+.dialogue-box.active {
+	display: block;
+}
+
+.choices-container {
+	margin-top: 1rem;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.choice-button {
+	background-color: transparent;
+	border: none;
+	color: #fff;
+}
+
+.choice-button ~ .choice-button {
+	margin-left: 0.5em;
+}
+
+/* END DIALOGUE BOX */
+
+/*LANDING PAGE */
+#haunted-mansion video {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.landing-page-video {
+	background-color: #000;
+}
+
+section #haunted-mansion {
+	position: relative;
+}
+
+.landing-text {
+	font-family: 'Risque', serif;
+	font-size: large;
+	color: #c9c1af;
+	position: absolute;
+	z-index: 2;
+	left: 10%;
+	top: 20%;
+}
+
+#landing-enter {
+	font-size: 2rem;
+	display: block;
+	width: 100%;
+	text-align: center;
+	font-family: inherit;
+	color: #c9c1af;
+	background: transparent;
+	margin-top: 1em;
+	border: none;
+	animation: pulse 1.25s infinite;
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+@media screen and (min-width: 768px) {
+	.choices-container {
+		width: 60%;
+		margin: 0 auto;
+		display: flex;
+		justify-content: space-between;
+	}
+}
+/*End landing page styles*/
+
+/* Hangman game styles */
+/* load captain howdy font from fonts/captain-howdy.ttf */
+@font-face {
+	font-family: 'Captain Howdy';
+	src: url('../fonts/captain-howdy.ttf');
+}
+
+.minigame {
+	display: none;
+}
+
+.minigame.active {
+	display: block;
+}
+
+.wooden-table {
+	background: linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.55)),
+		url('/images/wooden-table.webp');
+
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.old-woman {
+	background-image: url('/images/lonely-old-woman.webp');
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+#stickman {
+	margin: 2em auto;
+	display: block;
+}
+
+#hangman-game button {
+	border: none;
+	background-color: transparent;
+	font-size: 2rem;
+	margin-left: 0.2em;
+	font-family: 'Captain Howdy', sans-serif;
+}
+
+.ouija-board-image {
+	display: none;
+}
+
+.ouija-board-container {
+	position: relative;
+	max-width: 705px;
+	margin: 0 auto;
+}
+
+.ouija-board-alphabet {
+	position: absolute;
+	top: 40%;
+	left: 50%;
+	transform: translate(-50%);
+	width: 80%;
+	text-align: center;
+	color: #000;
+}
+
+.hangman-phrase-container {
+	width: 90%;
+	margin: 0 auto;
+	margin-bottom: 2em;
+}
+
+.hangman-phrase {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	width: 100%;
+	margin: 0 1%;
+}
+
+.hangman-letter-container {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	width: 20px;
+	margin: 0 1%;
+}
+
+.hangman-letter {
+	display: block;
+	height: 2rem;
+	font-size: 1.25rem;
+	font-family: 'Captain Howdy', sans-serif;
+	color: transparent;
+	width: 100%;
+	text-align: center;
+	position: relative;
+}
+
+.hangman-letter.revealed {
+	color: #000;
+}
+
+.hangman-letter::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 110%;
+	height: 2px;
+	background-color: #000;
+}
+
+.hangman-letter-space {
+	position: relative;
+	display: inline-block;
+	width: 4%;
+	margin: 0 1%;
+}
+
+@media screen and (min-width: 768px) {
+	.ouija-board-image {
+		display: block;
+	}
+
+	.hangman-letter {
+		height: 3rem;
+		font-size: 2.25rem;
+	}
+
+	#hangman-game button {
+		border: none;
+		background-color: transparent;
+		font-size: 2.25rem;
+		font-family: 'Captain Howdy', sans-serif;
+	}
+
+	.hangman-letter-space {
+		width: 1%;
+	}
+
+	.hangman-phrase {
+		flex-wrap: nowrap;
+	}
+}
+/* End Hangman game styles */
+
+/* Memory mini-game styles */
+#memory-game {
+	width: 100%;
+	height: 90%;
+	margin: 0 auto;
+	flex-wrap: wrap;
+	justify-content: space-around;
+}
+
+#memory-game.active {
+	display: flex;
+}
+
+.memory-card {
+	width: calc(25% - 10px);
+	height: calc(33.333% - 10px);
+	margin: 5px;
+	position: relative;
+	transform: scale(1);
+	transform-style: preserve-3d;
+	transition: transform 0.5s;
+	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.memory-card {
+	width: calc(33% - 10px);
+	max-height: 190px;
+}
+
+.memory-card:active {
+	transform: scale(0.97);
+	transition: transform 0.2s;
+}
+
+.memory-card.flip {
+	transform: rotateY(180deg);
+}
+
+.boy-ghost {
+	background-image: url('/images/boy-ghost.webp');
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.front-face,
+.back-face {
+	width: 100%;
+	height: 100%;
+	padding: 20px;
+	position: absolute;
+	border-radius: 5px;
+	background: #57615f;
+	backface-visibility: hidden;
+}
+
+.front-face {
+	transform: rotateY(180deg);
+}
+
+@media screen and (min-width: 768px) {
+	#memory-game {
+		width: 80%;
+		height: 90%;
+		margin: 0 auto;
+		flex-wrap: wrap;
+		justify-content: space-around;
+	}
+
+	.memory-card {
+		width: calc(22% - 10px);
+	}
+	.memory-card {
+		max-height: 300px;
+	}
+}
+
+/* End of memory minigame styles */
+
+/* Quiz game styles */
+/* card styles */
+.card {
+	background-color: #1a1a1a;
+	color: white;
+	margin: 20px;
+}
+
+/* card image styles */
+.card-img-top {
+	max-height: 300px;
+	object-fit: contain;
+}
+
+/* button styles */
+.btn {
+	background-color: #fafafa;
+	color: black;
+	font-weight: bold;
+	font-size: 120%;
+	margin: 5px;
+}
+
+.btn:hover {
+	background-color: #1a2227;
+	color: #fafafa;
+	font-size: 125%;
+}
+
+/* play button styles*/
+#play-button {
+	margin-top: 2rem;
+	background-color: #fafafa;
+	color: black;
+	font-weight: bolder;
+	border-radius: 1.3px black;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+/* quiz container styles */
+.quiz-container {
+	height: 100%;
+	width: 100%;
+	background-color: black;
+	background: url(../images/halloween-horror-pumkins.webp) no-repeat center center;
+	background-size: cover;
+	color: #fafafa;
+}
+
+/* dialogue background style */
+.quiz-foreground {
+	background-color: #36454f;
+	background: url(../../images/horror-eat-up.webp) no-repeat center center;
+	background-size: cover;
+}
+
+.game-area-lastquiz {
+	padding: 120px;
+}
+
+.button-lastquiz {
+	background-color: #080300;
+	border: none;
+	color: #ebdddd;
+	padding: 20px 20px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 20px;
+	margin: 20px;
+	cursor: pointer;
+	width: 200px;
+	height: 200px;
+	opacity: 0.8;
+}
+
+#question,
+#evaluation {
+	text-align: center;
+}
+
+#question {
+	font-size: 25px;
+	color: #fff;
+	margin: 20px;
+	background-color: #080300;
+	opacity: 0.5;
+	padding: 10px;
+}
+
+.game-area-lastquiz {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 20px;
+	position: relative;
+}
+
+.lastquiz-table {
+	background: url('/images/lastquiz.jpg');
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.quiz-table {
+	background: url('/images/tree-now.png');
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
