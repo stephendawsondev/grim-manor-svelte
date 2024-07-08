@@ -1,6 +1,6 @@
 //jshint esversion:6
-import { showDialogueAsync } from '../utils/dialogueGeneration.js';
-import { savePlayerData, loadPlayerData } from '../utils/gamedataLocalstore.js';
+import { showDialogueAsync } from '$lib/utils/dialogueGeneration.js';
+import { savePlayerData, loadPlayerData } from '$lib/utils/gamedataLocalstore.js';
 
 const gameContainer = document.getElementById('game-container');
 

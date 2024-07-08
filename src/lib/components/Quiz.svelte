@@ -6,16 +6,16 @@
 		<button id="play-button" class="btn btn-lg hvr-outline-in"> Play </button>
 		<!-- quiz question card -->
 		<div id="question-card" class="card d-none">
-			<img id="question-image" class="card-img-top" src="" />
+			<img id="question-image" class="card-img-top" src="" alt="" />
 			<div class="card-body">
-				<h5 id="question-text" class="card-title"></h5>
+				<!-- <h5 id="question-text" class="card-title"></h5> -->
 				<div id="answer-buttons"></div>
 			</div>
 		</div>
 		<!-- quiz result card -->
 		<div id="result-card" class="card d-none">
 			<div class="card-body">
-				<h5 id="result-text" class="card-title"></h5>
+				<!-- <h5 id="result-text" class="card-title"></h5> -->
 				<p id="correct-answer" class="card-text"></p>
 				<button id="next-button" class="btn btn-lg btn-dark"> Next </button>
 			</div>
@@ -23,7 +23,7 @@
 		<!-- quiz score card -->
 		<div id="score-card" class="card d-none">
 			<div class="card-body">
-				<h5 id="score-text" class="card-title"></h5>
+				<!-- <h5 id="score-text" class="card-title"></h5> -->
 				<img
 					id="gift-card"
 					class="card-img-top d-none"
@@ -41,7 +41,7 @@
 		<div>
 			<div id="end-card" class="card d-none">
 				<div class="card-body">
-					<h5 id="end-text" class="card-title"></h5>
+					<!-- <h5 id="end-text" class="card-title"></h5> -->
 					<button id="home-button" class="btn btn-lg btn-danger hvr-pop"> Exit </button>
 				</div>
 			</div>
