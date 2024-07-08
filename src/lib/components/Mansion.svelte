@@ -1,18 +1,36 @@
+<script lang="ts">
+	import { browser } from '$app/environment';
+	import Spirit from '$lib/components/Spirit.svelte';
+	import { getUserDataContext } from '$lib/index.svelte';
+
+	let userData = getUserDataContext().value;
+	if (browser) {
+		const ghost = document?.querySelector('.ghost-image');
+		if (ghost) {
+			ghost.classList.add('active');
+		}
+	}
+</script>
+
 <section id="mansion-container" class="main-page">
-	<img id="background-image" src="/images/scary-mansion.webp" alt="scary mansion image" />
+	<img id="background-image" src="/images/scary-mansion.webp" alt="scary mansion" />
 	<div class="overlay-container">
-		<a href="hangman" class="interactive" id="door1">
-			<img class="door-help" src="/images/golden-magic.png" />
-		</a>
-		<button class="interactive" id="door2">
-			<img class="door-help" src="/images/golden-magic.png" />
-		</button>
-		<button class="interactive" id="door3">
-			<img class="door-help" src="/images/golden-magic.png" />
-		</button>
-		<button class="interactive" id="door4">
-			<img class="door-help" src="/images/golden-magic.png" />
-		</button>
+		{#if !userData.firstTimePlaying}
+			<a href="hangman" class="interactive" id="door1">
+				<Spirit duration={12} color={userData.hangmanClueObtained ? 'white' : '#6ab5cd'} />
+			</a>
+			{#if userData.backDoorOpened}
+				<a href="final-quiz" class="interactive" id="door2">
+					<Spirit duration={3} color={userData.storyComplete ? 'white' : 'red'} />
+				</a>
+			{/if}
+			<a href="memory" class="interactive" id="door3">
+				<Spirit duration={10} color={userData.memoryClueObtained ? 'white' : '#6ab5cd'} />
+			</a>
+			<a href="quiz" class="interactive" id="door4">
+				<Spirit duration={8} color={userData.quizClueObtained ? 'white' : '#6ab5cd'} />
+			</a>
+		{/if}
 		<div class="ghost-container">
 			<img
 				src="/images/ghostly-man-image.png"
@@ -20,8 +38,6 @@
 				class="ghost-image"
 			/>
 		</div>
-
-		<img id="guide" src="/images/guide.png" alt="Guide image" />
 	</div>
 
 	<aside id="dialogue-box" class="dialogue-box" role="dialog">
