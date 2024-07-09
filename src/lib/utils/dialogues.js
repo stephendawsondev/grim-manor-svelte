@@ -7,13 +7,13 @@ const introDialogue = [
 		text: 'Pale man: Hello?',
 		choices: [
 			{
-				text: 'You: Are you a ghost?',
+				text: 'Are you a ghost?',
 				action: () => ({
 					newDialogue: { text: 'I think... I am' }
 				})
 			},
 			{
-				text: 'You: Are you okay?',
+				text: 'Are you okay?',
 				action: () => ({
 					newDialogue: { text: 'I think... I am a ghost' }
 				})
@@ -21,16 +21,16 @@ const introDialogue = [
 		]
 	},
 	{
-		text: 'Okay...',
+		text: '',
 		choices: [
 			{
-				text: 'You: Are you a friendly ghost?',
+				text: 'Are you a friendly ghost?',
 				action: () => ({
 					newDialogue: { text: 'I am, but there are others here...' }
 				})
 			},
 			{
-				text: 'You: Should I run away screaming?',
+				text: 'Should I run away screaming?',
 				action: () => ({
 					newDialogue: { text: 'Not from me...' }
 				})
@@ -41,7 +41,7 @@ const introDialogue = [
 		text: "It's very cold outside.",
 		choices: [
 			{
-				text: 'You: Can I stay a while?',
+				text: 'Can I stay a while?',
 				action: () => ({
 					newDialogue: {
 						text: 'That depends, will you help me with something?'
@@ -49,7 +49,7 @@ const introDialogue = [
 				})
 			},
 			{
-				text: 'You: Is it safe for me here?',
+				text: 'Is it safe for me here?',
 				action: () => ({
 					newDialogue: {
 						text: 'I can keep you safe, if you help me with something.'
@@ -62,7 +62,7 @@ const introDialogue = [
 		text: 'I need help finding out why I am stuck here in this house...',
 		choices: [
 			{
-				text: 'You: But I scare easily...',
+				text: 'But I scare easily...',
 				action: () => ({
 					newDialogue: {
 						text: 'You’ll be fine.'
@@ -70,7 +70,7 @@ const introDialogue = [
 				})
 			},
 			{
-				text: 'You: I can help you.',
+				text: 'I can help you.',
 				action: () => ({
 					newDialogue: {
 						text: 'Thank you.'
@@ -86,7 +86,7 @@ const introDialogue = [
 		text: 'I do not know why I am trapped, but I am sure that if I knew why I died then I would be able to move on...'
 	},
 	{
-		text: 'There are many clues hidden in this house – are you bold enough to find them?'
+		text: 'There are many clues hidden in this house – can you help me by finding them?'
 	}
 ];
 
@@ -131,6 +131,7 @@ const hangmanWinDialogue = [
 		choices: [
 			{
 				text: "Thank you... I'll be going...",
+				link: '/',
 				action: () => {
 					const gameContainer = document.getElementById('game-container');
 					gameContainer.classList.remove('wooden-table');
@@ -151,9 +152,7 @@ const hangmanLoseDialogue = [
 		choices: [
 			{
 				text: 'Try again?',
-				action: () => {
-					window.location.href = '/';
-				}
+				link: 'hangman'
 			},
 			{
 				text: 'Close',
@@ -183,7 +182,7 @@ const hangmanReturnDialogue = [
  * The dialogue for the memory game
  * @typedef {Object} Dialog
  */
-const memoryGameInitialDialgoue = [
+const memoryGameInitialDialogue = [
 	{
 		text: 'You walk to the stairs, where a young boy is sitting and playing a card game. His clothing is old, from another time. '
 	},
@@ -202,7 +201,7 @@ const memoryGameInitialDialgoue = [
  * The dialogue for the memory game
  * @typedef {Object} Dialog
  */
-const memoryGameEndDialgoue = [
+const memoryGameEndDialogue = [
 	{
 		text: 'In his high child’s voice, the boy says:'
 	},
@@ -210,7 +209,17 @@ const memoryGameEndDialgoue = [
 		text: '“The man who owned this house hung himself many years ago…”'
 	},
 	{
-		text: '“They say his spirit still haunts these halls but I have never seen him...”'
+		text: '“They say his spirit still haunts these halls but I have never seen him...”',
+		choices: [
+			{
+				text: '...thanks...',
+				link: '/',
+				action: () => {
+					const gameContainer = document.getElementById('game-container');
+					gameContainer.classList.remove('boy-ghost');
+				}
+			}
+		]
 	}
 ];
 
@@ -222,6 +231,6 @@ export {
 	hangmanWinDialogue,
 	hangmanLoseDialogue,
 	hangmanReturnDialogue,
-	memoryGameInitialDialgoue,
-	memoryGameEndDialgoue
+	memoryGameInitialDialogue,
+	memoryGameEndDialogue
 };
