@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { showDialogueAsync } from '$lib/utils/dialogueGeneration.js';
+	import { showDialogueAsync } from '$lib/utils/dialogueGeneration';
 	import {
 		hangmanIntroDialogue,
 		hangmanWinDialogue,
@@ -126,10 +126,11 @@
 							choices: [
 								{
 									text: "Thank you... I'll be going...",
+									link: '/',
 									action: () => {
 										const gameContainer = document.getElementById('game-container');
-										gameContainer?.classList.remove('wooden-table');
-										gameContainer?.classList.remove('old-woman');
+										gameContainer.classList.remove('wooden-table');
+										gameContainer.classList.remove('old-woman');
 									}
 								}
 							]
