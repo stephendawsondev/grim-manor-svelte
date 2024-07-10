@@ -38,11 +38,6 @@
 	const audioManager = new AudioManager(userData, audioFiles);
 
 	setAudioManagerContext(audioManager);
-	// if (userData.value.playerAllowsMusic) {
-	// 	audioManager.playAudio('darkAmbientMusic');
-	// }
-
-	$inspect(audioManager);
 
 	function toggleMusic() {
 		userData.value = {
@@ -63,28 +58,59 @@
 	{@render children()}
 </main>
 
-<button
-	title="Toggle music"
-	id="music-button"
-	class="audio-button music-button"
-	onclick={toggleMusic}
->
-	<img
-		id="music-icon"
-		src={userData.value.playerAllowsMusic ? '/images/music_on.webp' : '/images/music_off.webp'}
-		alt="music icon"
-	/>
-</button>
+{#await userData}
+	<!-- promise is pending -->
+{:then value}
+	<button
+		title="Toggle music"
+		id="music-button"
+		class="audio-button music-button"
+		onclick={toggleMusic}
+	>
+		<img
+			id="music-icon"
+			src={userData.value.playerAllowsMusic ? '/images/music_on.webp' : '/images/music_off.webp'}
+			alt="music icon"
+		/>
+	</button>
 
-<button
-	title="Toggle sound"
-	id="sound-button"
-	class="audio-button sound-button"
-	onclick={toggleSound}
->
-	<img
-		id="sound-icon"
-		src={userData.value.playerAllowsSound ? '/images/sound_on.webp' : '/images/sound_off.webp'}
-		alt="sound icon"
-	/>
-</button>
+	<button
+		title="Toggle sound"
+		id="sound-button"
+		class="audio-button sound-button"
+		onclick={toggleSound}
+	>
+		<img
+			id="sound-icon"
+			src={userData.value.playerAllowsSound ? '/images/sound_on.webp' : '/images/sound_off.webp'}
+			alt="sound icon"
+		/>
+	</button>
+{:catch error}
+	<!-- promise was rejected -->
+{/await}
+
+<style>
+	.audio-button {
+		position: fixed;
+		border: none;
+		top: 5px;
+		left: 5px;
+		z-index: 5;
+		background-color: transparent;
+		opacity: 0.5;
+		pointer-events: all;
+	}
+
+	.music-button {
+		top: 5px;
+		left: 5px;
+		z-index: 6;
+	}
+
+	.sound-button {
+		top: 5px;
+		left: 50px;
+		z-index: 6;
+	}
+</style>

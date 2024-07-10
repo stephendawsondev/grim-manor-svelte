@@ -193,10 +193,6 @@
 		gameContainer = document.getElementById('game-container');
 		hangmanContainer = document.getElementById('hangman-game');
 
-		if (userData.playerAllowsMusic) {
-			audioManager.playAudio('creepyWhistlyMusic');
-		}
-
 		const resetGame = () => {
 			gameState.guessedLetters.length = 0;
 			gameState.incorrectGuessCount = 0;
@@ -235,7 +231,6 @@
 
 			drawInitialScene();
 
-			const phraseContainer = document.querySelector('.hangman-phrase-container');
 			const hangmanPhrase = document?.querySelector('.hangman-phrase');
 
 			// check if letters letterContainer is empty
