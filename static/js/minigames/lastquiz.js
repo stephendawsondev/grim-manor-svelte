@@ -1,4 +1,3 @@
-import { savePlayerData, loadPlayerData } from '$lib/utils/gamedataLocalstore.js';
 import { showDialogueAsync } from '$lib/utils/dialogueGeneration.js';
 const gameContainer = document.getElementById('game-container');
 const lastquizContainer = document.getElementById('game-lastquiz');
@@ -100,7 +99,6 @@ async function gameLastQuiz_over() {
 		button.removeEventListener('click', () => {});
 	});
 	document.getElementById('game-lastquiz').classList.remove('active');
-	console.log('gameLastQuiz_over', score);
 
 	if (score === 3) {
 		const dialogue = [
@@ -113,10 +111,7 @@ async function gameLastQuiz_over() {
 			{
 				text: 'Thank you for your assistance, I feel that I can move on now. I am forever in your debt!'
 			}
-		];
 
-		let loadedPlayerData = loadPlayerData();
-		savePlayerData({ ...loadedPlayerData, backDoorOpened: true });
 		gameContainer.classList.add('lastquiz-table');
 		await showDialogueAsync(dialogue, true);
 
