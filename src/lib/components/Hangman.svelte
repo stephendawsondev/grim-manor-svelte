@@ -320,7 +320,7 @@
 	/* load captain howdy font from fonts/captain-howdy.ttf */
 	@font-face {
 		font-family: 'Captain Howdy';
-		src: url('../fonts/captain-howdy.ttf');
+		src: url('/fonts/captain-howdy.ttf');
 	}
 
 	:global(.wooden-table) {
