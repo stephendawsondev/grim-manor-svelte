@@ -2,26 +2,32 @@
 	import Hangman from './Hangman.svelte';
 	import Memory from './Memory.svelte';
 	import Quiz from './Quiz.svelte';
+	import LastQuiz from './LastQuiz.svelte';
 
 	let { gameName } = $props();
+
+	let gameContainerBackground = $state('');
+	let bgOverlay = $state('');
+
+	function updateContainerBackground(imgUrl: string, hasOverlay: boolean = false): void {
+		gameContainerBackground = imgUrl;
+		bgOverlay = hasOverlay
+			? 'linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.55))'
+			: '';
+	}
 </script>
 
-<div id="game-container">
+<div
+	id="game-container"
+	style="background-image: {bgOverlay ? bgOverlay + ',' : ''}url('{gameContainerBackground}');"
+>
 	{#if gameName === 'hangman'}
-		<Hangman />
+		<Hangman {updateContainerBackground} />
 	{:else if gameName === 'memory'}
-		<Memory />
+		<Memory {updateContainerBackground} />
 	{:else if gameName === 'quiz'}
-		<Quiz />
+		<Quiz {updateContainerBackground} />
+	{:else if gameName === 'last-quiz'}
+		<LastQuiz {updateContainerBackground} />
 	{/if}
-
-	<!-- <div class="minigame" id="game-lastquiz">
-		<div class="game-area-lastquiz">
-			<button id="a" class="button-lastquiz"></button>
-			<button id="b" class="button-lastquiz"></button>
-			<button id="c" class="button-lastquiz"></button>
-		</div>
-		<h5 id="question"></h5>
-		<p id="evaluation"></p>
-	</div> -->
 </div>
