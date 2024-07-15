@@ -9,6 +9,8 @@
 		userData.backDoorOpened = true;
 	}
 
+	userData.currentlyPlaying = 'darkAmbientMusic';
+
 	let audioManager = getAudioManagerContext();
 
 	$effect(async () => {

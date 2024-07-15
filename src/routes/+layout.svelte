@@ -45,6 +45,12 @@
 			...userData.value,
 			playerAllowsMusic: !userData.value.playerAllowsMusic
 		};
+
+		if (userData.value.playerAllowsMusic) {
+			audioManager.playAudioLoop(userData.value.currentlyPlaying);
+		} else {
+			audioManager.stopAudio(userData.value.currentlyPlaying);
+		}
 	}
 
 	function toggleSound() {

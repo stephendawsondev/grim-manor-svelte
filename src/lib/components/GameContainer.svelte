@@ -3,11 +3,16 @@
 	import Memory from './Memory.svelte';
 	import Quiz from './Quiz.svelte';
 	import LastQuiz from './LastQuiz.svelte';
+	import { getUserDataContext } from '$lib/index.svelte';
 
 	let { gameName } = $props();
 
 	let gameContainerBackground = $state('');
 	let bgOverlay = $state('');
+
+	let userData = getUserDataContext().value;
+
+	userData.currentlyPlaying = 'creepyWhistlyMusic';
 
 	function updateContainerBackground(imgUrl: string, hasOverlay: boolean = false): void {
 		gameContainerBackground = imgUrl;

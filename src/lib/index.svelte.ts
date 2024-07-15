@@ -38,6 +38,7 @@ interface UserData {
 	backDoorOpened: boolean;
 	playerAllowsMusic: boolean;
 	playerAllowsSound: boolean;
+	currentlyPlaying: string;
 }
 
 const USER_DATA = Symbol('USER_DATA');
