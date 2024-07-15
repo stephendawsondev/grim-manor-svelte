@@ -5,6 +5,9 @@
 	import { showDialogueAsync } from '$lib/utils/dialogueGeneration';
 	import { memoryGameInitialDialogue, memoryGameEndDialogue } from '$lib/utils/dialogues';
 
+	let { updateContainerBackground }: { updateContainerBackground: (background: string) => void } =
+		$props();
+
 	interface UserData {
 		playerName: string;
 		firstTimePlaying: boolean;
@@ -22,8 +25,7 @@
 	let audioManager = getAudioManagerContext();
 
 	onMount(async () => {
-		const gameContainer = document.getElementById('game-container') as HTMLDivElement;
-		gameContainer?.classList.add('boy-ghost');
+		updateContainerBackground('/images/boy-ghost.webp');
 
 		const cards = Array.from(document.querySelectorAll('.memory-card')) as HTMLDivElement[];
 		let hasFlippedCard = false;
@@ -32,7 +34,6 @@
 		let secondCard: HTMLDivElement | null = null;
 		let matchedPairs = 0;
 		const totalPairs = cards.length / 2;
-		let gameTimer: ReturnType<typeof setTimeout>;
 
 		cards.forEach((card) => {
 			card.addEventListener('click', flipCard as EventListener);
@@ -63,7 +64,6 @@
 
 			matchedPairs++;
 			if (matchedPairs === totalPairs) {
-				clearTimeout(gameTimer);
 				userData.memoryClueObtained = true;
 				document.getElementById('memory-game')!.classList.remove('active');
 				await showDialogueAsync(memoryGameEndDialogue, true);
@@ -97,10 +97,6 @@
 		function startMemoryGame() {
 			shuffleCards();
 			document.getElementById('memory-game')!.classList.add('active');
-			gameTimer = setTimeout(() => {
-				document.getElementById('memory-game')!.classList.remove('active');
-				showDialogueAsync("Time's up! Try again.", true);
-			}, 60000);
 		}
 
 		if (userData.playerAllowsSound) {
@@ -146,13 +142,6 @@
 
 	#memory-game:global(.active) {
 		display: grid;
-	}
-
-	:global(.boy-ghost) {
-		background-image: url('/images/boy-ghost.webp');
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
 	}
 
 	@media screen and (min-width: 768px) {

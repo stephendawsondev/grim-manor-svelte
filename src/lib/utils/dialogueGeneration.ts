@@ -13,12 +13,12 @@ const showDialogueAsync = (dialogue, appendToContainer = false) => {
 			dialogueBox = document.createElement('div');
 			dialogueBox.id = 'dialogue-box';
 			dialogueBox.classList.add('dialogue-box');
-			let dialogueText = document.createElement('p');
+			const dialogueText = document.createElement('p');
 			dialogueText.id = 'dialogue-text';
 			dialogueBox.appendChild(dialogueText);
-			let choicesContainer = document.createElement('div');
+			const choicesContainer = document.createElement('div');
 			choicesContainer.id = 'choices-container';
-			let chevronRight = document.createElement('svg');
+			const chevronRight = document.createElement('svg');
 			chevronRight.classList.add('chevron-right');
 			chevronRight.setAttribute('width', '50');
 			chevronRight.setAttribute('height', '50');

@@ -5,14 +5,19 @@
 	import { showDialogueAsync } from '$lib/utils/dialogueGeneration';
 
 	let userData = getUserDataContext().value;
+	if (userData.hangmanClueObtained && userData.memoryClueObtained && userData.quizClueObtained) {
+		userData.backDoorOpened = true;
+	}
 
 	let audioManager = getAudioManagerContext();
 
 	$effect(async () => {
 		if (userData.playerAllowsMusic) {
+			audioManager.stopAudio('creepyWhistlyMusic');
 			audioManager.playAudioLoop('darkAmbientMusic');
 		}
 		const ghost = document?.querySelector('.ghost-image');
+
 		if (ghost) {
 			ghost.classList.add('active');
 		}
@@ -40,7 +45,7 @@
 		</a>
 		{#if userData.backDoorOpened}
 			<a
-				href="final-quiz"
+				href="last-quiz"
 				class="interactive"
 				id="door2"
 				onclick={() => audioManager.stopAudio('darkAmbientMusic')}

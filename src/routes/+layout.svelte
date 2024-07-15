@@ -19,7 +19,8 @@
 		quizClueObtained: false,
 		backDoorOpened: false,
 		playerAllowsMusic: false,
-		playerAllowsSound: false
+		playerAllowsSound: false,
+		currentlyPlaying: 'darkAmbientMusic'
 	});
 
 	setUserDataContext(userData);

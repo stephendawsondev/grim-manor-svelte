@@ -12,14 +12,22 @@
 	import { getAudioManagerContext } from '$lib/index.svelte';
 	import { beforeNavigate } from '$app/navigation';
 
+	let {
+		updateContainerBackground
+	}: { updateContainerBackground: (background: string, hasOverlay?: boolean) => void } = $props();
+
 	let userData = getUserDataContext().value;
 	let audioManager = getAudioManagerContext();
 
-	let gameContainer: HTMLDivElement, hangmanContainer: HTMLDivElement;
+	let hangmanContainer: HTMLDivElement | null;
 	let alphabetOne = 'ABCDEFGHIJKLMN'.split('');
 	let alphabetTwo = 'OPQRSTUVWXYZ'.split('');
 
-	const gameState = {
+	const gameState: {
+		guessedLetters: string[];
+		incorrectGuessCount: number;
+		phraseArr: string;
+	} = {
 		guessedLetters: [],
 		incorrectGuessCount: 0,
 		phraseArr: ''
@@ -27,9 +35,10 @@
 
 	const drawInitialScene = () => {
 		if (document.getElementById('stickman')) {
-			const canvas: HTMLCanvasElement =
-				document?.getElementById('stickman') || document.createElement('canvas');
-			const context = canvas.getContext('2d') || new CanvasRenderingContext2D();
+			const canvas =
+				(document?.getElementById('stickman') as HTMLCanvasElement) ||
+				document.createElement('canvas');
+			const context = canvas?.getContext('2d') || new CanvasRenderingContext2D();
 
 			context.lineWidth = 4;
 
@@ -50,8 +59,10 @@
 	};
 
 	const drawHangman = () => {
-		const canvas = document.getElementById('stickman');
-		const context = canvas.getContext('2d');
+		const canvas: HTMLCanvasElement | null = document.getElementById(
+			'stickman'
+		) as HTMLCanvasElement;
+		const context = canvas?.getContext('2d') ?? new CanvasRenderingContext2D();
 		context.lineWidth = 4;
 
 		switch (gameState.incorrectGuessCount) {
@@ -116,7 +127,7 @@
 		const revealedSpans = document.querySelectorAll('.hangman-letter.revealed');
 		if (letterSpans.length === revealedSpans.length) {
 			hangmanContainer?.classList.remove('active');
-			gameContainer?.classList.add('old-woman');
+			updateContainerBackground('/images/lonely-old-woman.webp');
 			userData.hangmanClueObtained = true;
 			if (userData.hangmanClueObtained) {
 				showDialogueAsync(
@@ -128,9 +139,7 @@
 									text: "Thank you... I'll be going...",
 									link: '/',
 									action: () => {
-										const gameContainer = document.getElementById('game-container');
-										gameContainer.classList.remove('wooden-table');
-										gameContainer.classList.remove('old-woman');
+										updateContainerBackground('/images/lonely-old-woman.webp');
 									}
 								}
 							]
@@ -148,7 +157,7 @@
 		// Check if lost
 		if (gameState.incorrectGuessCount >= 6) {
 			hangmanContainer?.classList.remove('active');
-			gameContainer?.classList.add('old-woman');
+			updateContainerBackground('/images/lonely-old-woman.webp');
 			if (userData.hangmanClueObtained) {
 				showDialogueAsync([{ text: `Silly child... it was clearly "${phrase}"...` }], true);
 			}
@@ -158,10 +167,10 @@
 		return 'ongoing';
 	};
 
-	let checkLetter = (event) => {
+	let checkLetter = (event: MouseEvent) => {
 		const phraseArr = gameState.phraseArr.split('');
-		let buttonElement = event.target;
-		let letter = buttonElement.innerText;
+		let buttonElement = event.target as HTMLButtonElement;
+		let letter = buttonElement?.innerText ?? '';
 		if (gameState.guessedLetters.includes(letter)) return;
 
 		gameState.guessedLetters.push(letter);
@@ -177,12 +186,13 @@
 		const letterSpans = document.querySelectorAll('.hangman-letter');
 
 		for (const span of letterSpans) {
+			const dataset = (span as HTMLElement).dataset;
 			if (
 				gameState.guessedLetters
 					.map((letter) => letter.toUpperCase())
-					.includes(span.dataset.letter.toUpperCase())
+					.includes(dataset.letter?.toUpperCase() ?? '')
 			) {
-				span.innerText = span.dataset.letter;
+				span.textContent = dataset.letter ?? '';
 				span.classList.add('revealed');
 			}
 		}
@@ -190,16 +200,17 @@
 	};
 
 	onMount(() => {
-		gameContainer = document.getElementById('game-container');
-		hangmanContainer = document.getElementById('hangman-game');
+		hangmanContainer = document.getElementById('hangman-game') as HTMLDivElement | null;
 
 		const resetGame = () => {
 			gameState.guessedLetters.length = 0;
 			gameState.incorrectGuessCount = 0;
 
 			// reset canvas
-			const canvas = document.getElementById('stickman');
-			const context = canvas.getContext('2d');
+			const canvas: HTMLCanvasElement | null = document.getElementById(
+				'stickman'
+			) as HTMLCanvasElement;
+			const context = canvas?.getContext('2d') ?? new CanvasRenderingContext2D();
 			context.clearRect(0, 0, canvas.width, canvas.height);
 
 			// reset letter buttons
@@ -222,11 +233,10 @@
 
 			gameState.phraseArr = userData.hangmanClueObtained ? newClue : initialClue;
 
-			gameContainer?.classList.add('old-woman');
+			updateContainerBackground('/images/lonely-old-woman.webp');
 			let dialogue = userData.hangmanClueObtained ? hangmanReturnDialogue : hangmanIntroDialogue;
 			await showDialogueAsync(dialogue, true);
-			gameContainer?.classList.remove('old-woman');
-			gameContainer?.classList.add('wooden-table');
+			updateContainerBackground('/images/wooden-table.webp', true);
 			hangmanContainer?.classList.add('active');
 
 			drawInitialScene();
@@ -444,7 +454,7 @@
 			font-size: 2.25rem;
 		}
 
-		#hangman-game button {
+		#hangman-game :global(button) {
 			border: none;
 			background-color: transparent;
 			font-size: 2.25rem;
