@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getUserDataContext, getAudioManagerContext } from '$lib/index.svelte';
 	import { showDialogueAsync } from '$lib/utils/dialogueGeneration';
+	import type { Question, DialogueItem } from '$lib/types';
 
 	let {
 		updateContainerBackground
@@ -10,12 +11,6 @@
 
 	let userData = getUserDataContext().value;
 	let audioManager = getAudioManagerContext();
-
-	interface Question {
-		question: string;
-		answers: string[];
-		correctAnswerIndex: number;
-	}
 
 	const questions: Question[] = [
 		{
@@ -44,15 +39,6 @@
 			correctAnswerIndex: 0
 		}
 	];
-
-	interface DialogueItem {
-		text: string;
-		choices?: {
-			text: string;
-			link?: string;
-			action?: () => void;
-		}[];
-	}
 
 	const introDialogue: Array<DialogueItem> = [
 		{

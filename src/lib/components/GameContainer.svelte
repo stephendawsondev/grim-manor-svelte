@@ -36,3 +36,16 @@
 		<LastQuiz {updateContainerBackground} />
 	{/if}
 </div>
+
+<style>
+	#game-container {
+		height: 100vh;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-color: black;
+	}
+</style>

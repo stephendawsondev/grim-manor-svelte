@@ -52,7 +52,9 @@
 				id="door2"
 				onclick={() => audioManager.stopAudio('darkAmbientMusic')}
 			>
-				<Spirit duration={3} color={userData.storyComplete ? 'white' : 'red'} />
+				{#if !userData.storyComplete}
+					<Spirit duration={3} color={userData.storyComplete ? 'white' : 'red'} />
+				{/if}
 			</a>
 		{/if}
 		<a
