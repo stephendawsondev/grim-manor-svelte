@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Spirit from '$lib/components/Spirit.svelte';
 	import { getAudioManagerContext, getUserDataContext } from '$lib/index.svelte';
-	import { introDialogue, returnedButIncomplete } from '$lib/utils/dialogues';
 	import { showDialogueAsync } from '$lib/utils/dialogueGeneration';
+	import type { DialogueItem } from '$lib/types';
 
 	let userData = getUserDataContext().value;
 	if (userData.hangmanClueObtained && userData.memoryClueObtained && userData.quizClueObtained) {
@@ -13,24 +13,124 @@
 
 	let audioManager = getAudioManagerContext();
 
+	const introDialogue: DialogueItem[] = [
+		{
+			text: 'Pale man: Hello?',
+			choices: [
+				{
+					text: 'Are you a ghost?',
+					action: () => ({
+						newDialogue: { text: 'I think... I am' }
+					})
+				},
+				{
+					text: 'Are you okay?',
+					action: () => ({
+						newDialogue: { text: 'I think... I am a ghost' }
+					})
+				}
+			]
+		},
+		{
+			text: '',
+			choices: [
+				{
+					text: 'Are you a friendly ghost?',
+					action: () => ({
+						newDialogue: { text: 'I am, but there are others here...' }
+					})
+				},
+				{
+					text: 'Should I run away screaming?',
+					action: () => ({
+						newDialogue: { text: 'Not from me...' }
+					})
+				}
+			]
+		},
+		{
+			text: "It's very cold outside.",
+			choices: [
+				{
+					text: 'Can I stay a while?',
+					action: () => ({
+						newDialogue: {
+							text: 'That depends, will you help me with something?'
+						}
+					})
+				},
+				{
+					text: 'Is it safe for me here?',
+					action: () => ({
+						newDialogue: {
+							text: 'I can keep you safe, if you help me with something.'
+						}
+					})
+				}
+			]
+		},
+		{
+			text: 'I need help finding out why I am stuck here in this house...',
+			choices: [
+				{
+					text: 'But I scare easily...',
+					action: () => ({
+						newDialogue: {
+							text: 'You’ll be fine.'
+						}
+					})
+				},
+				{
+					text: 'I can help you.',
+					action: () => ({
+						newDialogue: {
+							text: 'Thank you.'
+						}
+					})
+				}
+			]
+		},
+		{
+			text: 'I have been trapped in this house for centuries.. able only to be seen by the human realm on Halloween...'
+		},
+		{
+			text: 'I do not know why I am trapped, but I am sure that if I knew why I died then I would be able to move on...'
+		},
+		{
+			text: 'There are many clues hidden in this house – can you help me by finding them?'
+		}
+	];
+
+	const returnedButIncomplete: DialogueItem[] = [
+		{
+			text: 'You have returned, thank you for your help so far...'
+		}
+	];
+
 	$effect(async () => {
 		if (userData.playerAllowsMusic) {
 			audioManager.stopAudio('creepyWhistlyMusic');
 			audioManager.playAudioLoop('darkAmbientMusic');
 		}
-		const ghost = document?.querySelector('.ghost-image');
+		if (!userData.storyComplete) {
+			const ghost = document?.querySelector('.ghost-image');
 
-		if (ghost) {
-			ghost.classList.add('active');
-		}
+			if (ghost) {
+				ghost.classList.add('active');
+			}
 
-		if (userData.firstTimePlaying == true) {
-			await showDialogueAsync(introDialogue);
+			if (userData.firstTimePlaying == true) {
+				await showDialogueAsync(introDialogue);
+			} else {
+				await showDialogueAsync(returnedButIncomplete);
+			}
 			userData.firstTimePlaying = false;
+			ghost?.classList.remove('active');
 		} else {
-			await showDialogueAsync(returnedButIncomplete);
+			await showDialogueAsync([
+				{ text: 'The young man is no longer appearing... he must have moved on.' }
+			]);
 		}
-		ghost?.classList.remove('active');
 	});
 </script>
 
