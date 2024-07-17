@@ -1,5 +1,6 @@
 import { browser } from '$app/environment';
 import { setContext, getContext } from 'svelte';
+import type { UserData } from '$lib/types';
 
 export class LocalStorage<T> {
 	value = $state<T>() as T;
@@ -25,20 +26,6 @@ export class LocalStorage<T> {
 	deserialise = (value: string) => {
 		return JSON.parse(value);
 	};
-}
-
-interface UserData {
-	playerName: string;
-	firstTimePlaying: boolean;
-	landingPageComplete: boolean;
-	storyComplete: boolean;
-	hangmanClueObtained: boolean;
-	memoryClueObtained: boolean;
-	quizClueObtained: boolean;
-	backDoorOpened: boolean;
-	playerAllowsMusic: boolean;
-	playerAllowsSound: boolean;
-	currentlyPlaying: string;
 }
 
 const USER_DATA = Symbol('USER_DATA');
