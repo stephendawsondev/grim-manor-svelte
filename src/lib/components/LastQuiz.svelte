@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { getUserDataContext, getAudioManagerContext } from '$lib/index.svelte';
 	import { showDialogueAsync } from '$lib/utils/dialogueGeneration';
+	import { onMount } from 'svelte';
 	import type { Question, DialogueItem } from '$lib/types';
 
 	let { updateContainerBackground }: { updateContainerBackground: (background: string) => void } =
 		$props();
 
 	let userData = getUserDataContext().value;
+	let audioManager = getAudioManagerContext();
 
 	// Adjust the question and answer format to match the first quiz
 	const questions: Question[] = [
@@ -60,9 +62,9 @@
 				currentQuestionIndex++;
 				quizStarted = true;
 			} else {
+				quizStarted = false;
 				await showDialogueAsync(score === questions.length ? winDialogue : loseDialogue);
 				userData.storyComplete = score === questions.length;
-				quizStarted = false;
 				if (userData.storyComplete) {
 					await showDialogueAsync(endStoryDialogue);
 				}
@@ -73,7 +75,7 @@
 
 	const finalStartFirstDialogue: DialogueItem[] = [
 		{
-			text: 'You enter the room with the young man and see a woman seated at a table.'
+			text: 'You follow the young man into the room and see a woman seated at a table.'
 		},
 		{
 			text: 'She is completely white and has a manic grin on her face.'
@@ -133,6 +135,7 @@
 				{
 					text: 'The tree?',
 					action: () => {
+						audioManager.playAudio('thunderstorm');
 						updateContainerBackground('/images/tree-now.png');
 					}
 				}
@@ -204,7 +207,7 @@
 
 	const loseDialogue: DialogueItem[] = [
 		{
-			text: 'Unfortunately you have missed some clues. Come back here and try again.'
+			text: 'You are not ready to speak or hear the truth...'
 		}
 	];
 
@@ -214,7 +217,13 @@
 		}
 	];
 
-	$effect(async () => {
+	onMount(async () => {
+		if (userData.playerAllowsSound) {
+			audioManager.playAudio('door');
+		}
+		if (userData.playerAllowsMusic) {
+			audioManager.playAudioLoop('creepyWhistlyMusic');
+		}
 		if (userData.storyComplete) {
 			updateContainerBackground('');
 			await showDialogueAsync(returnedAndComplete);
@@ -268,15 +277,6 @@
 		p {
 			font-size: 1.5rem;
 		}
-	}
-
-	.card {
-		background-color: #2a2a2a;
-		padding: 20px;
-		border-radius: 8px;
-		margin: 10px 0;
-		width: 100%;
-		max-width: 500px;
 	}
 
 	.btn.answer-btn.correct {
