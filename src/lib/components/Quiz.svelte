@@ -14,9 +14,9 @@
 
 	const questions: Question[] = [
 		{
-			question: "What is the name of the killer in the 'Halloween' movie?",
-			answers: ['Michael Myers', 'Jason Voorhees', 'Freddy Krueger', 'Leatherface'],
-			correctAnswerIndex: 0
+			question: 'What is a banshee traditionally known to do?',
+			answers: ['Sing beautifully', 'Laugh loudly', 'Scream or wail', 'Whisper secrets'],
+			correctAnswerIndex: 2
 		},
 		{
 			question: 'Which phobia means you have an intense fear of Halloween?',
@@ -29,9 +29,9 @@
 			correctAnswerIndex: 2
 		},
 		{
-			question: 'Which famous magician died on Halloween in 1926?',
-			answers: ['Harry Houdini', 'David Copperfield', 'David Blaine', 'Derren Brown'],
-			correctAnswerIndex: 0
+			question: 'What are floating orbs of light believed to represent in paranormal photography?',
+			answers: ['Dust particles', 'Spirits or energy', 'Camera flashes', 'Water droplets'],
+			correctAnswerIndex: 1
 		},
 		{
 			question: 'If you were born on Halloween, what star sign would you be?',
@@ -57,31 +57,13 @@
 			text: 'The seems to grow paler, if that were possible, as he looks at you.'
 		},
 		{
-			text: '"You have answered my questions correctly. The young is buried beneath the large tree behind the mansion."',
-			choices: [
-				{
-					text: 'Thank you, sir.',
-					link: '/',
-					action: () => {
-						showEndCard = true;
-					}
-				}
-			]
+			text: '"You have answered my questions correctly. The young is buried beneath the large tree behind the mansion."'
 		}
 	];
 
 	const loseDialogue: Array<DialogueItem> = [
 		{
-			text: '"No... not you... not at this time..."',
-			choices: [
-				{
-					text: 'Leave',
-					link: '/',
-					action: () => {
-						updateContainerBackground('/images/man-with-paper.webp');
-					}
-				}
-			]
+			text: '"No... not you... not at this time..."'
 		}
 	];
 
@@ -109,7 +91,9 @@
 				},
 				{
 					text: 'No',
-					link: '/'
+					action: () => {
+						showEndCard = true;
+					}
 				}
 			]
 		}
@@ -210,13 +194,7 @@
 					showScore = false;
 				}}>Play Again</button
 			>
-			<button
-				class="btn end-quiz-btn"
-				onclick={() => {
-					showEndCard = true;
-					showScore = false;
-				}}>End Quiz</button
-			>
+			<a class="btn end-quiz-btn" href="/">End Quiz</a>
 		</div>
 	{/if}
 
@@ -291,6 +269,8 @@
 		cursor: pointer;
 		font-weight: bold;
 		transition: all 0.3s ease;
+		text-decoration: none;
+		font-family: 'Risque', sans-serif;
 	}
 
 	.btn:hover {
