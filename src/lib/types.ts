@@ -4,12 +4,16 @@ export interface Question {
 	correctAnswerIndex: number;
 }
 
+interface ActionResult {
+	newDialogue?: DialogueItem;
+}
+
 export interface DialogueItem {
 	text: string;
 	choices?: {
 		text: string;
 		link?: string;
-		action?: () => void;
+		action?: () => ActionResult | void;
 	}[];
 }
 

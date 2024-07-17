@@ -1,16 +1,9 @@
 <script lang="ts">
 	import { showDialogueAsync } from '$lib/utils/dialogueGeneration';
-	import {
-		hangmanIntroDialogue,
-		hangmanWinDialogue,
-		hangmanLoseDialogue,
-		hangmanReturnDialogue
-	} from '$lib/utils/dialogues.js';
 	import { halloweenWords } from '$lib/gameWords';
 	import { onMount } from 'svelte';
-	import { getUserDataContext } from '$lib/index.svelte';
-	import { getAudioManagerContext } from '$lib/index.svelte';
-	import { beforeNavigate } from '$app/navigation';
+	import { getUserDataContext, getAudioManagerContext } from '$lib/index.svelte';
+	import type { DialogueItem } from '$lib/types';
 
 	let {
 		updateContainerBackground
@@ -18,20 +11,54 @@
 
 	let userData = getUserDataContext().value;
 	let audioManager = getAudioManagerContext();
-
+	let showEndCard: boolean = $state(false);
 	let hangmanContainer: HTMLDivElement | null;
-	let alphabetOne = 'ABCDEFGHIJKLMN'.split('');
-	let alphabetTwo = 'OPQRSTUVWXYZ'.split('');
+	let alphabetOne: string[] = 'ABCDEFGHIJKLMN'.split('');
+	let alphabetTwo: string[] = 'OPQRSTUVWXYZ'.split('');
+
+	const hangmanIntroDialogue: DialogueItem[] = [
+		{
+			text: 'You try the door on the left and enter a cluttered, dimly lit room.'
+		},
+		{
+			text: 'The smell of damp and incense hangs heavy in the air.'
+		},
+		{
+			text: 'A wizened old woman sits at a table in the centre of the room, surrounded my many dusty trinkets and books.'
+		},
+		{ text: 'In front of her she has a Ouija board...' }
+	];
+
+	const hangmanWinDialogue: DialogueItem[] = [
+		{
+			text: 'They say the young man’s fiancée married another man…'
+		}
+	];
+
+	const hangmanLoseDialogue: DialogueItem[] = [
+		{
+			text: "I'm sorry, dear... not this time..."
+		}
+	];
+
+	const hangmanReturnDialogue: DialogueItem[] = [
+		{
+			text: 'Welcome back, dear... you already know the young man’s fiancée married another man…'
+		},
+		{
+			text: 'But please, stay and chat...'
+		}
+	];
 
 	const gameState: {
 		guessedLetters: string[];
 		incorrectGuessCount: number;
 		phraseArr: string;
-	} = {
+	} = $state({
 		guessedLetters: [],
 		incorrectGuessCount: 0,
 		phraseArr: ''
-	};
+	});
 
 	const drawInitialScene = () => {
 		if (document.getElementById('stickman')) {
@@ -121,7 +148,7 @@
 		}
 	};
 
-	const checkGameStatus = (phrase: string) => {
+	const checkGameStatus = async (phrase: string) => {
 		// Check if won
 		const letterSpans = document.querySelectorAll('.hangman-letter');
 		const revealedSpans = document.querySelectorAll('.hangman-letter.revealed');
@@ -130,25 +157,15 @@
 			updateContainerBackground('/images/lonely-old-woman.webp');
 			userData.hangmanClueObtained = true;
 			if (userData.hangmanClueObtained) {
-				showDialogueAsync(
-					[
-						{
-							text: `Yes, dear... "${phrase}" is correct... well done...`,
-							choices: [
-								{
-									text: "Thank you... I'll be going...",
-									link: '/',
-									action: () => {
-										updateContainerBackground('/images/lonely-old-woman.webp');
-									}
-								}
-							]
-						}
-					],
-					true
-				);
+				await showDialogueAsync([
+					{
+						text: `Yes, dear... "${phrase}" is correct... well done...`
+					}
+				]);
+				showEndCard = true;
 			} else {
-				showDialogueAsync(hangmanWinDialogue, true);
+				await showDialogueAsync(hangmanWinDialogue, true);
+				showEndCard = true;
 			}
 
 			return 'won';
@@ -159,9 +176,12 @@
 			hangmanContainer?.classList.remove('active');
 			updateContainerBackground('/images/lonely-old-woman.webp');
 			if (userData.hangmanClueObtained) {
-				showDialogueAsync([{ text: `Silly child... it was clearly "${phrase}"...` }], true);
+				await showDialogueAsync([{ text: `Silly child... it was clearly "${phrase}"...` }]);
+				showEndCard = true;
+			} else {
+				await showDialogueAsync(hangmanLoseDialogue);
+				showEndCard = true;
 			}
-			showDialogueAsync(hangmanLoseDialogue, true);
 		}
 
 		return 'ongoing';
@@ -199,83 +219,81 @@
 		const status = checkGameStatus(gameState.phraseArr);
 	};
 
+	const resetGame = () => {
+		gameState.guessedLetters.length = 0;
+		gameState.incorrectGuessCount = 0;
+
+		// reset canvas
+		const canvas: HTMLCanvasElement | null = document.getElementById(
+			'stickman'
+		) as HTMLCanvasElement;
+		const context = canvas?.getContext('2d') ?? new CanvasRenderingContext2D();
+		context.clearRect(0, 0, canvas.width, canvas.height);
+
+		// reset letter buttons
+		const letterButtons = [...document.querySelectorAll('.ouija-board-alphabet-letter')].filter(
+			(el): el is HTMLButtonElement => el instanceof HTMLButtonElement
+		);
+		for (const button of letterButtons) {
+			button.disabled = false;
+			button.classList.remove('disabled');
+			button.setAttribute('aria-disabled', 'false');
+		}
+	};
+
+	const runHangmanGame = async () => {
+		// reset the game
+		resetGame();
+
+		const initialClue = 'She loved someone else';
+		const newClue = halloweenWords[Math.floor(Math.random() * halloweenWords.length)];
+
+		gameState.phraseArr = userData.hangmanClueObtained ? newClue : initialClue;
+
+		updateContainerBackground('/images/lonely-old-woman.webp');
+		let dialogue = userData.hangmanClueObtained ? hangmanReturnDialogue : hangmanIntroDialogue;
+		await showDialogueAsync(dialogue);
+		updateContainerBackground('/images/wooden-table.webp', true);
+		hangmanContainer?.classList.add('active');
+		drawInitialScene();
+
+		const hangmanPhrase = document?.querySelector('.hangman-phrase');
+
+		// check if letters letterContainer is empty
+		if (hangmanPhrase?.hasChildNodes()) {
+			hangmanPhrase.innerHTML = '';
+		}
+		for (const letter of gameState.phraseArr) {
+			const letterContainer = document.createElement('div');
+			letterContainer.classList.add('hangman-letter-container');
+			const letterSpan = document.createElement('span');
+
+			if (letter !== ' ') {
+				letterSpan.classList.add('hangman-letter');
+				letterSpan.dataset.letter = letter;
+			} else {
+				letterContainer.classList.add('hangman-letter-space');
+			}
+
+			letterContainer.appendChild(letterSpan);
+			hangmanPhrase?.appendChild(letterContainer);
+		}
+
+		// Add event listeners to letter buttons
+		const letterButtons = [...document.querySelectorAll('.ouija-board-alphabet-letter')].filter(
+			(el): el is HTMLButtonElement => el instanceof HTMLButtonElement
+		);
+		for (const button of letterButtons) {
+			if (gameState.guessedLetters.includes(button.innerText)) {
+				button.disabled = true;
+				button?.classList.add('disabled');
+				button?.setAttribute('aria-disabled', 'true');
+			}
+		}
+	};
+
 	onMount(() => {
 		hangmanContainer = document.getElementById('hangman-game') as HTMLDivElement | null;
-
-		const resetGame = () => {
-			gameState.guessedLetters.length = 0;
-			gameState.incorrectGuessCount = 0;
-
-			// reset canvas
-			const canvas: HTMLCanvasElement | null = document.getElementById(
-				'stickman'
-			) as HTMLCanvasElement;
-			const context = canvas?.getContext('2d') ?? new CanvasRenderingContext2D();
-			context.clearRect(0, 0, canvas.width, canvas.height);
-
-			// reset letter buttons
-			const letterButtons = [...document.querySelectorAll('.ouija-board-alphabet-letter')].filter(
-				(el): el is HTMLButtonElement => el instanceof HTMLButtonElement
-			);
-			for (const button of letterButtons) {
-				button.disabled = false;
-				button.classList.remove('disabled');
-				button.setAttribute('aria-disabled', 'false');
-			}
-		};
-
-		const runHangmanGame = async () => {
-			// reset the game
-			resetGame();
-
-			const initialClue = 'She married someone else';
-			const newClue = halloweenWords[Math.floor(Math.random() * halloweenWords.length)];
-
-			gameState.phraseArr = userData.hangmanClueObtained ? newClue : initialClue;
-
-			updateContainerBackground('/images/lonely-old-woman.webp');
-			let dialogue = userData.hangmanClueObtained ? hangmanReturnDialogue : hangmanIntroDialogue;
-			await showDialogueAsync(dialogue, true);
-			updateContainerBackground('/images/wooden-table.webp', true);
-			hangmanContainer?.classList.add('active');
-
-			drawInitialScene();
-
-			const hangmanPhrase = document?.querySelector('.hangman-phrase');
-
-			// check if letters letterContainer is empty
-			if (hangmanPhrase?.hasChildNodes()) {
-				hangmanPhrase.innerHTML = '';
-			}
-			for (const letter of gameState.phraseArr) {
-				const letterContainer = document.createElement('div');
-				letterContainer.classList.add('hangman-letter-container');
-				const letterSpan = document.createElement('span');
-
-				if (letter !== ' ') {
-					letterSpan.classList.add('hangman-letter');
-					letterSpan.dataset.letter = letter;
-				} else {
-					letterContainer.classList.add('hangman-letter-space');
-				}
-
-				letterContainer.appendChild(letterSpan);
-				hangmanPhrase?.appendChild(letterContainer);
-			}
-
-			// Add event listeners to letter buttons
-			const letterButtons = [...document.querySelectorAll('.ouija-board-alphabet-letter')].filter(
-				(el): el is HTMLButtonElement => el instanceof HTMLButtonElement
-			);
-			for (const button of letterButtons) {
-				if (gameState.guessedLetters.includes(button.innerText)) {
-					button.disabled = true;
-					button?.classList.add('disabled');
-					button?.setAttribute('aria-disabled', 'true');
-				}
-			}
-		};
-
 		// play door open audio
 		if (userData.playerAllowsSound) {
 			audioManager.playAudio('door');
@@ -286,18 +304,12 @@
 
 		runHangmanGame();
 	});
-
-	beforeNavigate(() => {
-		if (userData.playerAllowsMusic) {
-			audioManager.stopAudio('creepyWhistlyMusic');
-		}
-	});
 </script>
 
 {#snippet alphabetLetter(letter)}
-	<button class="ouija-board-alphabet-letter" aria-label={letter} onclick={(e) => checkLetter(e)}
-		>{letter}</button
-	>
+	<button class="ouija-board-alphabet-letter" aria-label={letter} onclick={(e) => checkLetter(e)}>
+		{letter}
+	</button>
 {/snippet}
 <div class="minigame" id="hangman-game">
 	<canvas id="stickman"> Your browser does not support the hangman drawing. </canvas>
@@ -324,8 +336,52 @@
 		</div>
 	</div>
 </div>
+{#if showEndCard}
+	<div class="card end-card">
+		<p>What do you want to do?</p>
+		<button
+			class="btn exit-btn"
+			onclick={() => {
+				showEndCard = false;
+				runHangmanGame();
+			}}>Play again</button
+		>
+		<a href="/" class="btn exit-btn">Exit</a>
+	</div>
+{/if}
 
 <style>
+	.card {
+		background-color: #2a2a2a;
+		padding: 20px;
+		border-radius: 8px;
+		margin: 10px 0;
+		width: 100%;
+		max-width: 500px;
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%);
+		color: #fafafa;
+
+		.btn {
+			background-color: #fafafa;
+			color: #1a1a1a;
+			border: none;
+			padding: 10px 20px;
+			margin: 5px;
+			border-radius: 4px;
+			cursor: pointer;
+			font-weight: bold;
+			text-decoration: none;
+			transition: all 0.3s ease;
+			&:hover {
+				background-color: #1a2227;
+				color: #fafafa;
+				transform: scale(1.05);
+			}
+		}
+	}
 	/* Hangman game styles */
 	/* load captain howdy font from fonts/captain-howdy.ttf */
 	@font-face {
@@ -361,7 +417,7 @@
 		margin: 2em auto;
 		display: block;
 	}
-	#hangman-game :global(button) {
+	#hangman-game :not(.card) :global(button) {
 		border: none;
 		background-color: transparent;
 		font-size: 2rem;
@@ -451,14 +507,28 @@
 
 		:global(.hangman-letter) {
 			height: 3rem;
-			font-size: 2.25rem;
+			font-size: 2.2rem;
 		}
 
-		#hangman-game :global(button) {
+		#hangman-game :not(.card) :global(button) {
 			border: none;
 			background-color: transparent;
-			font-size: 2.25rem;
 			font-family: 'Captain Howdy', sans-serif;
+		}
+
+		.card > .btn {
+			padding: 10px 20px;
+			margin: 5px;
+			border-radius: 4px;
+			cursor: pointer;
+			font-weight: bold;
+			transition: all 0.3s ease;
+			font-size: 1rem;
+			&:hover {
+				background-color: #1a2227;
+				color: #fafafa;
+				transform: scale(1.05);
+			}
 		}
 
 		:global(.hangman-letter-space) {

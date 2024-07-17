@@ -1,8 +1,9 @@
-let dialogueQueue = [];
+import type { DialogueItem } from '$lib/types';
+let dialogueQueue: DialogueItem[] = [];
 let dialogueIndex = 0;
 
-const showDialogueAsync = (dialogue, appendToContainer = false) => {
-	return new Promise((resolve) => {
+const showDialogueAsync = (dialogue: DialogueItem[], appendToContainer = false) => {
+	return new Promise<void>((resolve) => {
 		const parentElement = appendToContainer
 			? document.getElementById('game-container')
 			: document.body;
@@ -36,7 +37,9 @@ const showDialogueAsync = (dialogue, appendToContainer = false) => {
 
 			dialogueBox.appendChild(choicesContainer);
 			dialogueBox.appendChild(chevronRight);
-			parentElement.appendChild(dialogueBox);
+			if (parentElement) {
+				parentElement.appendChild(dialogueBox);
+			}
 		}
 
 		dialogueQueue = dialogue;
@@ -44,7 +47,7 @@ const showDialogueAsync = (dialogue, appendToContainer = false) => {
 		let isDialogueReady = false;
 		let isChoiceMade = true;
 
-		const handleKeyPress = (event) => {
+		const handleKeyPress = (event: KeyboardEvent) => {
 			if (event.key === 'Enter' && isDialogueReady && isChoiceMade) {
 				continueDialogue();
 			}
@@ -54,44 +57,56 @@ const showDialogueAsync = (dialogue, appendToContainer = false) => {
 			isDialogueReady = false;
 			if (dialogueIndex < dialogueQueue.length) {
 				dialogueBox.classList.add('active');
-				const dialogueText = dialogueBox.querySelector('#dialogue-text');
+				const dialogueText: HTMLParagraphElement = dialogueBox.querySelector(
+					'#dialogue-text'
+				) as HTMLParagraphElement;
 				const choicesContainer = dialogueBox.querySelector('#choices-container');
 
-				dialogueText.innerText = dialogueQueue[dialogueIndex].text;
-				choicesContainer.innerHTML = '';
+				if (dialogueText) {
+					dialogueText.innerText = dialogueQueue[dialogueIndex].text;
+				}
+				if (choicesContainer) {
+					choicesContainer.innerHTML = '';
+				}
 
 				if (dialogueQueue[dialogueIndex].choices) {
 					isChoiceMade = false;
 					document.addEventListener('keydown', handleKeyPress);
-					for (const choice of dialogueQueue[dialogueIndex].choices) {
-						document?.querySelector('.chevron-right')?.classList.remove('display');
-						const choiceButton = document.createElement('a');
+					const choices = dialogueQueue[dialogueIndex]?.choices;
+					if (choices) {
+						for (const choice of choices) {
+							document?.querySelector('.chevron-right')?.classList.remove('display');
+							const choiceButton = document.createElement('a');
 
-						if (choice.link && choice.link !== '') {
-							choiceButton.href = choice.link;
-						} else {
-							choiceButton.href = '#';
-						}
-						choiceButton.classList.add('choice-button');
-						choiceButton.innerText = choice.text;
-						choiceButton.addEventListener('click', (event) => {
-							event.stopPropagation();
-							isChoiceMade = true;
-							if (choice.action) {
-								const actionResult = choice.action();
-								if (actionResult && actionResult.newDialogue) {
-									dialogueQueue.splice(dialogueIndex + 1, 0, actionResult.newDialogue);
-								}
+							if (choice.link && choice.link !== '') {
+								choiceButton.href = choice.link;
+							} else {
+								choiceButton.href = '#';
 							}
-							dialogueIndex++;
-							updateDialogue();
-						});
-						choicesContainer.appendChild(choiceButton);
+							choiceButton.classList.add('choice-button');
+							choiceButton.innerText = choice.text;
+							choiceButton.addEventListener('click', (event) => {
+								event.stopPropagation();
+								isChoiceMade = true;
+								if (choice.action) {
+									const actionResult = choice.action();
+									if (actionResult && actionResult.newDialogue) {
+										dialogueQueue.splice(dialogueIndex + 1, 0, actionResult.newDialogue);
+									}
+								}
+								dialogueIndex++;
+								updateDialogue();
+							});
+							if (choicesContainer) choicesContainer.appendChild(choiceButton);
+						}
 					}
 				} else {
-					document.querySelector('.chevron-right').classList.add('display');
-					document.addEventListener('keydown', handleKeyPress);
-					isChoiceMade = true;
+					const chevronRight: SVGElement | null = document.querySelector('.chevron-right');
+					if (chevronRight) {
+						chevronRight.classList.add('display');
+						document.addEventListener('keydown', handleKeyPress);
+						isChoiceMade = true;
+					}
 				}
 
 				setTimeout(() => {

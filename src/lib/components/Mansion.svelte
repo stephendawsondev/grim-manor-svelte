@@ -3,6 +3,7 @@
 	import { getAudioManagerContext, getUserDataContext } from '$lib/index.svelte';
 	import { showDialogueAsync } from '$lib/utils/dialogueGeneration';
 	import type { DialogueItem } from '$lib/types';
+	import { onMount } from 'svelte';
 
 	let userData = getUserDataContext().value;
 	if (userData.hangmanClueObtained && userData.memoryClueObtained && userData.quizClueObtained) {
@@ -107,7 +108,7 @@
 		}
 	];
 
-	$effect(async () => {
+	onMount(async () => {
 		if (userData.playerAllowsMusic) {
 			audioManager.stopAudio('creepyWhistlyMusic');
 			audioManager.playAudioLoop('darkAmbientMusic');

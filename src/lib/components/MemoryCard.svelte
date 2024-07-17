@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { cardName } = $props();
+	let { cardName }: { cardName: string } = $props();
 </script>
 
 <div class="memory-card" data-framework={cardName}>

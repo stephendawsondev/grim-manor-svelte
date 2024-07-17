@@ -1,4 +1,4 @@
-export const halloweenWords = [
+export const halloweenWords: string[] = [
 	'All Hallows Eve',
 	'Haunted House',
 	'Witchcraft',

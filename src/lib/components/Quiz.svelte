@@ -2,6 +2,7 @@
 	import { getUserDataContext, getAudioManagerContext } from '$lib/index.svelte';
 	import { showDialogueAsync } from '$lib/utils/dialogueGeneration';
 	import type { Question, DialogueItem } from '$lib/types';
+	import { onMount } from 'svelte';
 
 	let {
 		updateContainerBackground
@@ -132,9 +133,12 @@
 		}
 
 		setTimeout(async () => {
-			answerState = null;
-			currentQuestionIndex++;
-			if (currentQuestionIndex >= questions.length) {
+			answerButton.classList.remove('correct', 'incorrect');
+
+			if (currentQuestionIndex + 1 < questions.length) {
+				currentQuestionIndex++;
+				quizStarted = true;
+			} else {
 				if (score === questions.length) {
 					userData.quizClueObtained = true;
 					await showDialogueAsync(winDialogue);
@@ -143,22 +147,18 @@
 				}
 				showScore = true;
 				quizStarted = false;
-			} else {
-				quizStarted = true;
 			}
-
-			answerButton.classList.remove('correct', 'incorrect');
+			answerState = null;
 		}, 1500);
 	}
 
-	$effect(async () => {
+	onMount(async () => {
 		updateContainerBackground('/images/man-with-paper.webp');
 
 		if (userData.quizClueObtained) {
-			showDialogueAsync(returnedAndComplete);
+			await showDialogueAsync(returnedAndComplete);
 		} else {
 			await showDialogueAsync(introDialogue);
-
 			handlePlay();
 		}
 	});

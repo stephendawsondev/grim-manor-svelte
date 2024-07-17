@@ -4,21 +4,25 @@
 	let userData = getUserDataContext().value;
 	let audioManager = getAudioManagerContext();
 
-	const setVideoSource = () => {
+	const setVideoSource = (): Promise<string> => {
 		return new Promise((resolve, reject) => {
-			if (document.querySelector('#haunted-mansion video')) {
-				const videoElement: HTMLVideoElement = document.querySelector('#haunted-mansion video');
-			}
+			const videoElement = document.querySelector(
+				'#haunted-mansion video'
+			) as HTMLVideoElement | null;
 
-			const sourceElement: HTMLSourceElement = videoElement?.querySelector('source');
-			const windowWidth = window.innerWidth;
-
-			if (!sourceElement || !videoElement) {
-				reject('Video element or source not found.');
+			if (!videoElement) {
+				reject('Video element not found.');
 				return;
 			}
 
-			// Set the source based on screen width if on the landing page
+			const sourceElement = videoElement.querySelector('source') as HTMLSourceElement | null;
+			const windowWidth = window.innerWidth;
+
+			if (!sourceElement) {
+				reject('Source element not found.');
+				return;
+			}
+
 			if (windowWidth <= 600) {
 				sourceElement.src = `/images/haunted-mansion-mobile.webm`;
 			} else if (windowWidth <= 1024) {
@@ -27,18 +31,16 @@
 				sourceElement.src = `/images/haunted-mansion.webm`;
 			}
 
-			// Listen for when the video has loaded the metadata of the new source
 			videoElement.onloadedmetadata = () => {
 				resolve('Video metadata loaded.');
-				videoElement.onloadedmetadata = null; // Remove the event listener after it fires once
+				videoElement.onloadedmetadata = null;
 			};
 
 			videoElement.onerror = () => {
 				reject('Error loading video.');
-				videoElement.onerror = null; // Remove the event listener after it fires
+				videoElement.onerror = null;
 			};
 
-			// Explicitly tell the video element to load the new source
 			videoElement.load();
 		});
 	};
