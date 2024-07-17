@@ -68,7 +68,14 @@
 		<p>All Hallows Eve...</p>
 		<p>A torrential, thunderous night…</p>
 		<p>You seek refuge at an old mansion.</p>
-		<button id="landing-enter" onclick={() => (userData.landingPageComplete = true)}>
+		<button
+			id="landing-enter"
+			tabindex="0"
+			onclick={() => {
+				userData.landingPageComplete = true;
+				audioManager.stopAudio('thunderstorm');
+			}}
+		>
 			Enter...
 		</button>
 	</div>
@@ -91,7 +98,7 @@
 
 	.landing-text {
 		font-family: 'Risque', serif;
-		font-size: large;
+		font-size: 1.75rem;
 		color: #c9c1af;
 		position: absolute;
 		z-index: 2;
@@ -109,18 +116,21 @@
 		background: transparent;
 		margin-top: 1em;
 		border: none;
-		animation: pulse 1.25s infinite;
+		animation: pulse 1.25s infinite alternate-reverse;
 	}
 
 	@keyframes pulse {
 		0% {
 			transform: scale(1);
+			color: #fff;
 		}
 		50% {
 			transform: scale(1.1);
+			color: hsl(60, 4%, 72%);
 		}
 		100% {
 			transform: scale(1);
+			color: #fff;
 		}
 	}
 </style>
