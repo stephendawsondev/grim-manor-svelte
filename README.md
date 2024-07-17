@@ -1,4 +1,4 @@
-# GRIM REP'O'S GRIM MANOR PROJECT
+# GRIM REPO'S GRIM MANOR PROJECT
 
 <img src="static/readme-images/man-in-mansion.png" alt="ghost in mansion" width="1200"/>
 
