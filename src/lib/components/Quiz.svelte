@@ -58,7 +58,7 @@
 			text: 'The seems to grow paler, if that were possible, as he looks at you.'
 		},
 		{
-			text: '"You have answered my questions correctly. The young is buried beneath the large tree behind the mansion."'
+			text: '"You have answered my questions correctly. That young man is buried beneath the large tree behind the mansion."'
 		}
 	];
 
