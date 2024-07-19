@@ -100,8 +100,8 @@
 		}
 	];
 
-	let currentQuestionIndex = $state(0);
-	let score = $state(0);
+	let currentQuestionIndex: number = $state(0);
+	let score: number = $state(0);
 	let answerState: 'correct' | 'incorrect' | null = $state(null);
 	let showScore: boolean = $state(false);
 	let showEndCard: boolean = $state(false);
